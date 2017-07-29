@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if ! getent passwd $UNISON_UID; then
+	adduser -D -u $UNISON_UID unisonuser
+fi
+if ! getent group $UNISON_GID; then
+	addgroup -g $UNISON_GID unisongroup
+fi
+
+if [ -n "$UNISON_CHOWN" ]; then
+	chown -R $UNISON_UID:$UNISON_GID /data-volume
+fi
+
+su $(getent passwd $UNISON_UID | cut -d: -f1) -c "unison $*"
